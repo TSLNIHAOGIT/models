@@ -64,6 +64,7 @@ def my_model(features, labels, mode, params):
     assert mode == tf.estimator.ModeKeys.TRAIN
 
     optimizer = tf.train.AdagradOptimizer(learning_rate=0.1)
+    #global_step=tf.train.get_global_step()这样才会显示横坐标，不然就没有了
     train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
     return tf.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
 
@@ -88,7 +89,11 @@ def main(argv):
             'hidden_units': [10, 10],
             # The model must choose between 3 classes.
             'n_classes': 3,
-        })
+        },
+
+    #保存模型的地址
+    model_dir = "model",
+    config= tf.estimator.RunConfig(keep_checkpoint_max=1,log_step_count_steps=50,save_summary_steps=10))
 
     # Train the Model.
     classifier.train(
